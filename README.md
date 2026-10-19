@@ -83,7 +83,7 @@ python3 tools/pack-samsung-module.py --tag <tag> # 打成可刷入的 zip，每�
 
 ## License
 
-GPL-2.0，见 [LICENSE](LICENSE)。
+GPL-3.0，见 [LICENSE](LICENSE)。
 
 ## 免责声明
 
