@@ -51,7 +51,7 @@ rmmod susfs_samsung_lkm
 ## Flashing as a KernelSU module
 
 To skip picking the `.ko` by hand, each release ships a packaged module
-`susfs-lkm-module-<tag>-arm64-multi-kmi.zip`: flash it in a KernelSU manager, then **soft reboot**
+`susfs-lkm-module-<tag>-L-L-arm64.zip`: flash it in a KernelSU manager, then **soft reboot**
 (which is what the manager offers first in late-load mode), or run `ksud late-load` once more. The
 module picks the `.ko` for the device kernel (`/proc/sys/kernel/osrelease`), loads it with
 `expose_proc=1`, applies no susfs rules, and skips if susfs is already present.

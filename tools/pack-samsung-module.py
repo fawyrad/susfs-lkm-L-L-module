@@ -127,7 +127,7 @@ def main():
     }
 
     out = Path(args.out) if args.out else (
-        ROOT / "dist" / f"susfs-lkm-module-{args.tag}-arm64-multi-kmi.zip")
+        ROOT / "dist" / f"susfs-lkm-module-{args.tag}-L-L-arm64.zip")
     out.parent.mkdir(parents=True, exist_ok=True)
     # Built next to the destination and renamed only when complete: an interrupted build must not
     # leave a truncated file that still looks like an installable module.

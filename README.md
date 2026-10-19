@@ -46,7 +46,7 @@ rmmod susfs_samsung_lkm
 
 ## 作为 KernelSU 模块刷入
 
-想免去手动选 `.ko`，每个 release 附带打包好的模块 `susfs-lkm-module-<tag>-arm64-multi-kmi.zip`：在
+想免去手动选 `.ko`，每个 release 附带打包好的模块 `susfs-lkm-module-<tag>-L-L-arm64.zip`：在
 KernelSU 管理器里刷入，然后**软重启**（late-load 模式下管理器优先给的就是软重启），或再跑一次
 `ksud late-load`。模块按设备内核（`/proc/sys/kernel/osrelease`）自动选择并加载对应的 `.ko`（带
 `expose_proc=1`），只负责加载、不设任何 susfs 规则；系统里已有 susfs 则跳过。
