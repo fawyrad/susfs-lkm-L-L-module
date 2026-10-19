@@ -15,8 +15,9 @@ LSM kprobe + O_PATH kretprobe，DEFEX 与 KDP 的凭据成对处理，卸载时�
 
 | 这一层 | 来自 |
 |---|---|
-| 内核侧源码与 hook 点（LKM 基线） | [inforcqb/susfs4ksu-lkm](https://github.com/inforcqb/susfs4ksu-lkm) `v2.3.0-r18.3`（`899976e`） |
+| 内核侧源码与 hook 点（LKM 基线） | [inforcqb/susfs4ksu-lkm](https://github.com/inforcqb/susfs4ksu-lkm) |
 | SUSFS 本身（功能逻辑与 hook 点） | [simonpunk/susfs4ksu](https://gitlab.com/simonpunk/susfs4ksu) |
+
 在这个基础上，本仓库做的是三星适配：这类内核在 EL2 保护 `sys_call_table`，所以不写 text/rodata，改走 LSM
 kprobe + O_PATH kretprobe；DEFEX 与 KDP 的凭据成对处理、卸载时还原；加载时机从 `post-fs-data` 挪到
 `late-load`；模块状态写进 `module.prop`；选 `.ko` 时多一道固件版本闸（`lib/releases`）。
