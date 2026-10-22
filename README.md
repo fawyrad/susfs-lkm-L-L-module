@@ -1,6 +1,6 @@
 [English](README.en.md)
 
-# susfs4ksu-lkm
+# susfs4ksu-lkm-L-L
 
 SUSFS 的可加载内核模块（LKM）移植，面向三星 RKP/KDP/DEFEX 设备：不重编译内核即可获得 susfs 隐藏，
 配合 late-load 的 KernelSU 使用。
