@@ -27,6 +27,19 @@ rmmod susfs_samsung_lkm
 
 The `/proc/susfs_*` control nodes: see [PROC_INTERFACES.en.md](PROC_INTERFACES.en.md).
 
+## Module status
+
+The description shown in the manager's module list is the live status (decided by
+`status_refresh()` in `module/lib.sh`):
+
+| Status | Meaning |
+|---|---|
+| `Worldline Shifting...` | disabled / pending removal; or installed but never activated |
+| `< 0%` | a load was attempted and did not take; or the ko is in the kernel with zero layers armed |
+| `1.0485%` | partially armed; or status unreadable (no guessing) |
+| `1.048596%` | fully armed on the branch route (RKP devices; Steins;Gate) |
+| `1.130205%` | fully armed on the table route (non-RKP devices; alpha attractor field) |
+
 ## License
 
 GPL-3.0. For technical research and study only, use at your own risk.

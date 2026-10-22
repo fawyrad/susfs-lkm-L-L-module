@@ -1,11 +1,11 @@
 [English](README.en.md)
 
-# susfs4ksu-lkm-L-L
+# susfs4ksu-lkm
 
 SUSFS 的可加载内核模块（LKM）移植，面向三星 RKP/KDP/DEFEX 设备：不重编译内核即可获得 susfs 隐藏，
 配合 late-load 的 KernelSU 使用。
 
-基于 [inforcqb/susfs4ksu-lkm](https://github.com/inforcqb/susfs4ksu-lkm) ，
+基于 [inforcqb/susfs4ksu-lkm](https://github.com/inforcqb/susfs4ksu-lkm)（v2.3.0-r18.4），
 功能源头 [susfs4ksu](https://gitlab.com/simonpunk/susfs4ksu)。
 
 ## 使用
@@ -25,6 +25,18 @@ rmmod susfs_samsung_lkm
 ```
 
 `/proc/susfs_*` 控制节点见 [PROC_INTERFACES.md](PROC_INTERFACES.md)。
+
+## 模块状态
+
+管理器模块列表里 `module.prop` 的描述显示当前状态（判定逻辑在 `module/lib.sh` 的 `status_refresh()`）：
+
+| 状态 | 含义 |
+|---|---|
+| `Worldline Shifting...` | 已停用/待删除；或已安装但从未激活过 |
+| `< 0%` | 试过加载但没成功；或 ko 在内核里但一层都没 armed |
+| `1.0485%` | 部分生效；或状态读不出来（不猜） |
+| `1.048596%` | 全部生效，走 B 分支路线（RKP 机器；Steins;Gate） |
+| `1.130205%` | 全部生效，走表项改写路线（非 RKP 机器；α 吸引域） |
 
 ## License
 
