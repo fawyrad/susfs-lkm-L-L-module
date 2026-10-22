@@ -1,11 +1,11 @@
 [中文](README.md)
 
-# susfs4ksu-lkm
+# susfs-lkm-loader L-L
 
 A loadable kernel module (LKM) port of SUSFS for Samsung RKP/KDP/DEFEX devices: susfs hiding
 without recompiling the kernel, alongside a late-loaded KernelSU.
 
-Based on [inforcqb/susfs4ksu-lkm](https://github.com/inforcqb/susfs4ksu-lkm) (v2.3.0-r18.4);
+Based on [inforcqb/susfs4ksu-lkm](https://github.com/inforcqb/susfs4ksu-lkm) ;
 feature source [susfs4ksu](https://gitlab.com/simonpunk/susfs4ksu).
 
 ## Usage
@@ -36,9 +36,9 @@ The description shown in the manager's module list is the live status (decided b
 |---|---|
 | `Worldline Shifting...` | disabled / pending removal; or installed but never activated |
 | `< 0%` | a load was attempted and did not take; or the ko is in the kernel with zero layers armed |
-| `1.0485%` | partially armed; or status unreadable (no guessing) |
-| `1.048596%` | fully armed on the branch route (RKP devices; Steins;Gate) |
-| `1.130205%` | fully armed on the table route (non-RKP devices; alpha attractor field) |
+| `1.0485%` | partially armed; or status unreadable |
+| `1.048596%` | fully armed on the branch route |
+| `1.130205%` | fully armed on the table route |
 
 ## License
 
