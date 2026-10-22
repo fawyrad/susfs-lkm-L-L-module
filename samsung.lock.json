@@ -6,9 +6,9 @@
   },
   "upstream_lkm": {
     "repository": "https://github.com/inforcqb/susfs4ksu-lkm",
-    "ref": "v2.3.0-r18.3",
-    "commit": "899976e9891fd91787df641c2ab0ba42c80d0ee7",
-    "note": "baseline for this branch: the official release, not upstream main. r18.3 (2026-10-15) is the release this branch was waiting for - it fixes four things that were live bugs here: the O_PATH deny path's reference accounting on 5.10/5.15 (close_fd_get_file() takes a reference of its own before 6.1, so the caller owes two fput()s) and its 6.1+ prototype change (same name, returns the file, so the old prototype read the pointer as a status and the deny handed back a dead descriptor), the map_files symlink dentry/mount reference leak (PR #90), the seq_show multi-match above 5.15 in open_redirect's fdinfo face (PR #95), and the mount keep table going 8 -> 64 plus the uid_scheme 4 boundary (PR #84/#93). ksu_umount_gate.h also gained the umount gate's uid boundary; our module-notifier fix for the rmmod case (upstream issue #50) is still ours alone. Still REVERTED here: commit 103cf9e (stat/dirent post-checks driven from sys_call_table entries) - a Samsung kernel protects sys_call_table at EL2, susfs_fp_install() refuses the write, and all 14 entries would fail to install, so the sys_exit tracepoint stays the carrier for stat + dirent. That has one new consequence in r18.3: sus_dirent.c (the pre-emission getdents64 filter) hangs off kstat_wrap_getdents64, i.e. off that same refused table entry, so it has no carrier on this build and its init is gated off with a log; the post-hoc filter keeps hiding, only the two tells stay. Giving it a kprobe carrier of its own is the next step, not done here. Upstream fixes that ride the sys_call_table carriers do not arm on this build: check the carrier before taking one."
+    "ref": "v2.3.0-r18.4",
+    "commit": "8b65f13f3eff4e9d530c92a92dde6133b0700ae7",
+    "note": "baseline for this branch: the official release v2.3.0-r18.4 (2026-10-20, tag commit 8b65f13f3e). It was merged onto our r18.3 delta as a three-way merge (ours = r18.3 + samsung delta, upstream = r18.4), so only three files needed hand resolution: kernel/Makefile (object list = union), kernel/sus_path.c (include block keeps both sides) and kernel/susfs_main.c (upstream rewritten file as the base, our layer-table extras re-inserted: rkp_branch layer, /proc/susfs_status node, susfs_fp_drain on teardown, up= bookkeeping). Adopted from upstream: ksu_allow_gate + control-node relabel (executed only below 6.4), the layer table with fatal/armed/fail_layer, imports_guard + crosscheck, the sus_path readlink face, the sus_dirent compat layout with the two compat getdents wrappers, opath fd-slot restore under files->file_lock, the sus_map outer show_map probe and the open_redirect fdinfo width fix. Four post-tag fixes from upstream main ride along: 7d74b9b9f6 (clear KPROBE_FLAG_DISABLED before reusing a probe), af563036db (__check_object_size guarded by CONFIG_HARDENED_USERCOPY), e1cc7ce5c3 (no ksu_file label without a KernelSU predicate) and a5e7ba57b8 (avc_spoof spoofs the tsid too, and refuses to arm when the sid lookup fails). Two fixes are ours: the branch site table went 16 -> 24 (14 kstat entry hooks + 5 opath hooks = 19 installation requests, old cap silently dropped at least two on RKP devices) and susfs_rkp_exit() keeps a site whose restore failed instead of decrementing the count and forgetting it. The variant string stays \"GKI\": upstream r18.4 switched it to \"GKI-LKM\" and FinaSU's ksud only classifies GKI/NON-GKI. The module scripts keep the matsu lineage, so upstream's set_description() (load result written back to module.prop) is not ported yet. Note on carriers: the older paragraph about all 14 entries failing described the sys_call_table route (commit 103cf9e, reverted). The carrier now is the function-entry fp hook, installed through susfs_rkp_branch_patch_callthru() on an RKP device, and sus_dirent's prefilter rides kstat_wrap_getdents64."
   },
   "samsung_build": {
     "tree": "D:/root/susfs4ksu-lkm-work",
@@ -39,13 +39,36 @@
     "android15-6.6": "6.6.98-android15-8-p5a696e2-abogkiS9380ZCSDCZH1-4k"
   },
   "assets": {
-    "android13-5.15_susfs_samsung_lkm.ko": "45f7a1b366301233c7e840777bbc996ad49f7fe44f6b2d7e344842fb96a5aebc",
-    "android14-6.1_susfs_samsung_lkm.ko": "afb41ecf1a0ba07ff2319ed81b1853539f8807319d81da043b835d45b7c49c0a",
-    "android15-6.6_susfs_samsung_lkm.ko": "a9ba0500d8d890078b159c5de0fbac1f1142d1f2f0533520d426e81aeacfe694"
+    "android13-5.15_susfs_samsung_lkm.ko": "7dc8193c20901d251a81d2bd899edeaa8e097d6fe565f9b6aeb498c4f06dc90c",
+    "android14-6.1_susfs_samsung_lkm.ko": "ab27cce357fb8f65fda1bb8c9fa66dc196258d2e47e8ae52866ed77e6fc3d0bf",
+    "android15-6.6_susfs_samsung_lkm.ko": "43b5b00461739e5899f4b54f4ab910eb17733c63e0e08e4801955a5084348ea4"
   },
   "loader": {
     "source": "tools/susfs_insmod.c",
     "build": "clang --target=aarch64-linux-gnu -O2 -fPIC -nostdlib -static-pie -fno-stack-protector -fno-builtin -fuse-ld=lld -Wl,-e,_start -o bin/susfs_insmod tools/susfs_insmod.c",
     "note": "built here rather than hash-pinned: the upstream loader at this baseline skips a kallsyms record that belongs to another module (c4e37af), which is the fix this branch wants. Its hash is recorded in the ZIP's provenance.json."
+  },
+  "upstream_post_tag_fixes": {
+    "7d74b9b9f6": "kernel/susfs_kprobe.h: clear KPROBE_FLAG_DISABLED before reusing a probe",
+    "af563036db": "kernel/imports_guard.c: __check_object_size only under CONFIG_HARDENED_USERCOPY",
+    "e1cc7ce5c3": "kernel/susfs_main.c: no ksu_file label without a KernelSU predicate",
+    "a5e7ba57b8": "kernel/susfs_avc_spoof.c: spoof the tsid too, refuse to arm without sids",
+    "9d36644fdf": "kernel/susfs_uname.c: uname_pad + strscpy_pad so a shorter spoof never leaks the tail of the previous (longer) value - the community-reported Play Integrity regression",
+    "f5f9c05e0a": "kernel/spoof_cmdline.c: spoof_lock + drain-retired instead of leaking up to 8KB per set() and racing concurrent supercalls; needs susfs_wait_for_readers() (declared in kernel/susfs.h, defined in kernel/lsm_hook.c as a thin wrapper over ksu_lsm_hook_drain)",
+    "f1a7321a2d": "kernel/sus_mount.c: kill the devname arm before clearing the inode, or a remount reusing the same source string stays hidden by the stale record",
+    "3fe2c37eba": "kernel/sus_mount.c: SUS_MOUNT_SCAN_PASSES 16 so a batch larger than SUS_MOUNT_ID_BATCH cannot leave the rest of the mounts visible in /proc/mounts"
+  },
+  "assets_note": "rebuilt on 2026-10-22 after the r18.4 sync, the landing-pad dedupe (kernel/susfs_arm64.h) and the second batch of four post-tag fixes (uname padding, spoof_cmdline drain, sus_mount devname+scan); sizes 5,839,168 / 5,041,208 / 2,627,568",
+  "module_zip": {
+    "name": "susfs-lkm-module-v2.3.0-r18.4-L-L-arm64.zip",
+    "bytes": 3755777,
+    "sha256": "9d660839867f6934eea59cb7643ff9f16a478822580565550963fd53c9c0d2bd",
+    "module_prop": "v2.3.0-r18.4 (versionCode 2)",
+    "embedded": [
+      "susfs_samsung_lkm-android13-5.15.ko",
+      "susfs_samsung_lkm-android14-6.1.ko",
+      "susfs_samsung_lkm-android15-6.6.ko"
+    ],
+    "loaders_reused_from": "r18.3 zip (susfs_insmod/susfs_probe, kernel-independent)"
   }
 }

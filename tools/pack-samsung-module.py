@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: GPL-2.0-only
 """Pack the flashable Samsung module ZIP from this tree, entirely from local inputs.
 
-This is the Samsung branch's packer; the upstream generic packer is not shipped here.  It packs the
-same module/ scripts as upstream plus what the Samsung flow adds:
+This is the Samsung branch's packer.  Upstream's tools/pack_module.py is left untouched and packs
+the upstream-style module; this one packs the same module/ scripts plus what the Samsung flow adds:
 
   * lib/susfs_samsung_lkm-<kmi>.ko  the Samsung (RKP-safe) builds from out/, hash-verified against
                                   samsung.lock.json before packaging
@@ -127,7 +127,7 @@ def main():
     }
 
     out = Path(args.out) if args.out else (
-        ROOT / "dist" / f"susfs-lkm-module-{args.tag}-L-L-arm64.zip")
+        ROOT / "dist" / f"susfs-lkm-module-{args.tag}-arm64-multi-kmi.zip")
     out.parent.mkdir(parents=True, exist_ok=True)
     # Built next to the destination and renamed only when complete: an interrupted build must not
     # leave a truncated file that still looks like an installable module.
