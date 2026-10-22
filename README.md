@@ -5,7 +5,7 @@
 SUSFS 的可加载内核模块（LKM）移植，面向三星 RKP/KDP/DEFEX 设备：不重编译内核即可获得 susfs 隐藏，
 配合 late-load 的 KernelSU 使用。
 
-基于 [inforcqb/susfs4ksu-lkm](https://github.com/inforcqb/susfs4ksu-lkm)（v2.3.0-r18.4），
+基于 [inforcqb/susfs4ksu-lkm](https://github.com/inforcqb/susfs4ksu-lkm) ，
 功能源头 [susfs4ksu](https://gitlab.com/simonpunk/susfs4ksu)。
 
 ## 使用
